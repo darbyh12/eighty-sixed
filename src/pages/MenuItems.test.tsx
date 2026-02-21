@@ -17,7 +17,7 @@ function renderMenuItems(props = {}) {
   return render(
     <MemoryRouter>
       <MenuItems {...defaultProps} />
-    </MemoryRouter>
+    </MemoryRouter>,
   )
 }
 

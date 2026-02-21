@@ -1,8 +1,16 @@
 import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import {
-  LayoutDashboard, UtensilsCrossed, Upload, Users, Lightbulb,
-  Settings, FlaskConical, Menu, X, ChevronRight
+  LayoutDashboard,
+  UtensilsCrossed,
+  Upload,
+  Users,
+  Lightbulb,
+  Settings,
+  FlaskConical,
+  Menu,
+  X,
+  ChevronRight,
 } from 'lucide-react'
 
 const navItems = [
@@ -24,7 +32,7 @@ export function Layout({ children, restaurantName }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
 
-  const currentPage = navItems.find(item => {
+  const currentPage = navItems.find((item) => {
     if (item.path === '/') return location.pathname === '/'
     return location.pathname.startsWith(item.path)
   })
@@ -44,7 +52,7 @@ export function Layout({ children, restaurantName }: LayoutProps) {
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {navItems.map(item => (
+          {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
@@ -59,10 +67,7 @@ export function Layout({ children, restaurantName }: LayoutProps) {
             >
               <item.icon size={18} strokeWidth={2} className="shrink-0" />
               <span>{item.label}</span>
-              <ChevronRight
-                size={14}
-                className="ml-auto opacity-0 group-hover:opacity-50 transition-opacity"
-              />
+              <ChevronRight size={14} className="ml-auto opacity-0 group-hover:opacity-50 transition-opacity" />
             </NavLink>
           ))}
         </nav>
@@ -107,7 +112,7 @@ export function Layout({ children, restaurantName }: LayoutProps) {
           </button>
         </div>
         <nav className="px-3 py-4 space-y-1">
-          {navItems.map(item => (
+          {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
@@ -115,9 +120,7 @@ export function Layout({ children, restaurantName }: LayoutProps) {
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-3 rounded-xl text-[14px] font-medium transition-all ${
-                  isActive
-                    ? 'bg-indigo-50 text-indigo-700'
-                    : 'text-[var(--color-text-secondary)] hover:bg-gray-50'
+                  isActive ? 'bg-indigo-50 text-indigo-700' : 'text-[var(--color-text-secondary)] hover:bg-gray-50'
                 }`
               }
             >
@@ -161,9 +164,7 @@ export function Layout({ children, restaurantName }: LayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-4 lg:p-8 max-w-[1400px] w-full mx-auto">
-          {children}
-        </main>
+        <main className="flex-1 p-4 lg:p-8 max-w-[1400px] w-full mx-auto">{children}</main>
       </div>
     </div>
   )

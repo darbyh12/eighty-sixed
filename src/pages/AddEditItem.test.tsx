@@ -19,7 +19,7 @@ function renderAddEdit(props = {}, route = '/menu/add') {
         <Route path="/menu/edit/:id" element={<AddEditItem {...defaultProps} />} />
         <Route path="/menu" element={<div data-testid="menu-page">Menu</div>} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   )
 }
 
@@ -59,9 +59,7 @@ describe('AddEditItem', () => {
     const submitBtn = screen.getByText('Add Menu Item', { selector: 'button' })
     fireEvent.click(submitBtn)
 
-    expect(addMenuItem).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'New Dish', salePrice: 15 })
-    )
+    expect(addMenuItem).toHaveBeenCalledWith(expect.objectContaining({ name: 'New Dish', salePrice: 15 }))
   })
 
   it('shows live profit calculator', () => {

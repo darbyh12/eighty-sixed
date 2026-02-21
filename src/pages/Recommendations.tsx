@@ -1,7 +1,15 @@
 import { useState } from 'react'
 import {
-  Lightbulb, DollarSign, TrendingUp, Trash2, Wrench,
-  CheckCircle2, ChevronDown, ChevronUp, ArrowRight, Filter
+  Lightbulb,
+  DollarSign,
+  TrendingUp,
+  Trash2,
+  Wrench,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  ArrowRight,
+  Filter,
 } from 'lucide-react'
 import type { Recommendation } from '../lib/types'
 import { cn } from '../lib/utils'
@@ -13,7 +21,12 @@ interface RecommendationsProps {
 
 const typeConfig = {
   reprice: { icon: DollarSign, label: 'Reprice', color: 'text-blue-600 bg-blue-50', border: 'border-blue-200' },
-  promote: { icon: TrendingUp, label: 'Promote', color: 'text-emerald-600 bg-emerald-50', border: 'border-emerald-200' },
+  promote: {
+    icon: TrendingUp,
+    label: 'Promote',
+    color: 'text-emerald-600 bg-emerald-50',
+    border: 'border-emerald-200',
+  },
   remove: { icon: Trash2, label: 'Remove', color: 'text-red-600 bg-red-50', border: 'border-red-200' },
   optimize: { icon: Wrench, label: 'Optimize', color: 'text-amber-600 bg-amber-50', border: 'border-amber-200' },
 }
@@ -29,14 +42,14 @@ export function Recommendations({ recommendations, toggleRecommendation }: Recom
   const [showImplemented, setShowImplemented] = useState(false)
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
-  const filtered = recommendations.filter(r => {
+  const filtered = recommendations.filter((r) => {
     if (filterType !== 'all' && r.type !== filterType) return false
     if (!showImplemented && r.implemented) return false
     return true
   })
 
-  const openCount = recommendations.filter(r => !r.implemented).length
-  const implementedCount = recommendations.filter(r => r.implemented).length
+  const openCount = recommendations.filter((r) => !r.implemented).length
+  const implementedCount = recommendations.filter((r) => r.implemented).length
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -52,7 +65,7 @@ export function Recommendations({ recommendations, toggleRecommendation }: Recom
       {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {Object.entries(typeConfig).map(([type, config]) => {
-          const count = recommendations.filter(r => r.type === type && !r.implemented).length
+          const count = recommendations.filter((r) => r.type === type && !r.implemented).length
           const Icon = config.icon
           return (
             <button
@@ -60,7 +73,9 @@ export function Recommendations({ recommendations, toggleRecommendation }: Recom
               onClick={() => setFilterType(filterType === type ? 'all' : type)}
               className={cn(
                 'p-4 rounded-2xl border transition-all text-left',
-                filterType === type ? `${config.border} border-2 bg-white shadow-sm` : 'border-[var(--color-border)] bg-white hover:shadow-sm'
+                filterType === type
+                  ? `${config.border} border-2 bg-white shadow-sm`
+                  : 'border-[var(--color-border)] bg-white hover:shadow-sm',
               )}
             >
               <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center mb-2', config.color)}>
@@ -85,7 +100,7 @@ export function Recommendations({ recommendations, toggleRecommendation }: Recom
           <input
             type="checkbox"
             checked={showImplemented}
-            onChange={e => setShowImplemented(e.target.checked)}
+            onChange={(e) => setShowImplemented(e.target.checked)}
             className="rounded border-[var(--color-border)] text-indigo-500 focus:ring-indigo-200"
           />
           <span className="text-xs text-[var(--color-text-secondary)]">Show implemented ({implementedCount})</span>
@@ -94,7 +109,7 @@ export function Recommendations({ recommendations, toggleRecommendation }: Recom
 
       {/* Recommendation cards */}
       <div className="space-y-3">
-        {filtered.map(rec => {
+        {filtered.map((rec) => {
           const config = typeConfig[rec.type]
           const Icon = config.icon
           const priority = priorityConfig[rec.priority]
@@ -105,7 +120,9 @@ export function Recommendations({ recommendations, toggleRecommendation }: Recom
               key={rec.id}
               className={cn(
                 'bg-white rounded-2xl border transition-all',
-                rec.implemented ? 'border-emerald-200 bg-emerald-50/30 opacity-75' : 'border-[var(--color-border)] hover:shadow-sm'
+                rec.implemented
+                  ? 'border-emerald-200 bg-emerald-50/30 opacity-75'
+                  : 'border-[var(--color-border)] hover:shadow-sm',
               )}
             >
               <div className="p-4 sm:p-5">
@@ -119,7 +136,9 @@ export function Recommendations({ recommendations, toggleRecommendation }: Recom
                       <div>
                         <h4 className="text-sm font-semibold">{rec.menuItemName}</h4>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase', config.color)}>
+                          <span
+                            className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase', config.color)}
+                          >
                             {config.label}
                           </span>
                           <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full', priority.color)}>
@@ -129,10 +148,16 @@ export function Recommendations({ recommendations, toggleRecommendation }: Recom
                       </div>
                       <button
                         onClick={() => toggleRecommendation(rec.id)}
-                        aria-label={rec.implemented ? `Mark ${rec.menuItemName} recommendation as not implemented` : `Mark ${rec.menuItemName} recommendation as implemented`}
+                        aria-label={
+                          rec.implemented
+                            ? `Mark ${rec.menuItemName} recommendation as not implemented`
+                            : `Mark ${rec.menuItemName} recommendation as implemented`
+                        }
                         className={cn(
                           'shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors',
-                          rec.implemented ? 'bg-emerald-100 text-emerald-600' : 'bg-[var(--color-surface-tertiary)] text-[var(--color-text-tertiary)] hover:bg-emerald-50 hover:text-emerald-500'
+                          rec.implemented
+                            ? 'bg-emerald-100 text-emerald-600'
+                            : 'bg-[var(--color-surface-tertiary)] text-[var(--color-text-tertiary)] hover:bg-emerald-50 hover:text-emerald-500',
                         )}
                       >
                         <CheckCircle2 size={16} />

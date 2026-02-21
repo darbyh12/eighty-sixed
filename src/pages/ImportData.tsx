@@ -32,81 +32,95 @@ export function ImportData({ importMenuItems, menuItems }: ImportDataProps) {
   const [importDone, setImportDone] = useState(false)
   const [parseError, setParseError] = useState('')
 
-  const processFile = useCallback((file: File) => {
-    const existingNames = new Set(menuItems.map(i => i.name.toLowerCase().trim()))
-    setParseError('')
+  const processFile = useCallback(
+    (file: File) => {
+      const existingNames = new Set(menuItems.map((i) => i.name.toLowerCase().trim()))
+      setParseError('')
 
-    if (file.size > MAX_FILE_SIZE) {
-      setParseError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum is 5MB.`)
-      return
-    }
+      if (file.size > MAX_FILE_SIZE) {
+        setParseError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum is 5MB.`)
+        return
+      }
 
-    setFileName(file.name)
-    setImportDone(false)
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      preview: MAX_ROWS,
-      complete: (results) => {
-        if (results.errors.length > 0) {
-          const errorMsgs = results.errors.slice(0, 3).map(e => e.message).join('; ')
-          setParseError(`Parse errors: ${errorMsgs}`)
-        }
-
-        const rows: ParsedRow[] = results.data.map((row: Record<string, string>) => {
-          const errors: string[] = []
-          const name = (row.name || row.item_name || row.item || row.Name || row['Item Name'] || '').toString().trim()
-          const category = (row.category || row.Category || row.type || 'Uncategorized').toString().trim()
-          const salePrice = parseFloat(row.sale_price || row.price || row.Price || row['Sale Price'] || '0')
-          const ingredientCost = parseFloat(row.ingredient_cost || row.cost || row.Cost || row['Food Cost'] || '0')
-          const laborMinutes = parseInt(row.labor_minutes || row.prep_time || row['Prep Time'] || '5')
-          const unitsSold = parseInt(row.units_sold || row.quantity || row.Quantity || row['Units Sold'] || '0')
-
-          if (!name) errors.push('Missing name')
-          if (isNaN(salePrice) || salePrice <= 0) errors.push('Invalid price')
-          if (isNaN(ingredientCost)) errors.push('Invalid cost')
-
-          const duplicate = existingNames.has(name.toLowerCase())
-
-          return {
-            name, category,
-            salePrice: isNaN(salePrice) ? 0 : salePrice,
-            ingredientCost: isNaN(ingredientCost) ? 0 : ingredientCost,
-            laborMinutes: isNaN(laborMinutes) ? 5 : laborMinutes,
-            unitsSold: isNaN(unitsSold) ? 0 : unitsSold,
-            valid: errors.length === 0, errors,
-            duplicate,
+      setFileName(file.name)
+      setImportDone(false)
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        preview: MAX_ROWS,
+        complete: (results) => {
+          if (results.errors.length > 0) {
+            const errorMsgs = results.errors
+              .slice(0, 3)
+              .map((e) => e.message)
+              .join('; ')
+            setParseError(`Parse errors: ${errorMsgs}`)
           }
-        })
-        setParsedData(rows)
-      },
-      error: (err) => {
-        setParseError(`Failed to parse file: ${err.message}`)
-      },
-    })
-  }, [menuItems])
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setDragOver(false)
-    setParseError('')
-    const file = e.dataTransfer.files[0]
-    if (file && (file.name.endsWith('.csv') || file.name.endsWith('.tsv'))) {
-      processFile(file)
-    } else if (file) {
-      setParseError('Unsupported file type. Please upload a .csv or .tsv file.')
-    }
-  }, [processFile])
+          const rows: ParsedRow[] = results.data.map((row: Record<string, string>) => {
+            const errors: string[] = []
+            const name = (row.name || row.item_name || row.item || row.Name || row['Item Name'] || '').toString().trim()
+            const category = (row.category || row.Category || row.type || 'Uncategorized').toString().trim()
+            const salePrice = parseFloat(row.sale_price || row.price || row.Price || row['Sale Price'] || '0')
+            const ingredientCost = parseFloat(row.ingredient_cost || row.cost || row.Cost || row['Food Cost'] || '0')
+            const laborMinutes = parseInt(row.labor_minutes || row.prep_time || row['Prep Time'] || '5')
+            const unitsSold = parseInt(row.units_sold || row.quantity || row.Quantity || row['Units Sold'] || '0')
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) processFile(file)
-  }, [processFile])
+            if (!name) errors.push('Missing name')
+            if (isNaN(salePrice) || salePrice <= 0) errors.push('Invalid price')
+            if (isNaN(ingredientCost)) errors.push('Invalid cost')
+
+            const duplicate = existingNames.has(name.toLowerCase())
+
+            return {
+              name,
+              category,
+              salePrice: isNaN(salePrice) ? 0 : salePrice,
+              ingredientCost: isNaN(ingredientCost) ? 0 : ingredientCost,
+              laborMinutes: isNaN(laborMinutes) ? 5 : laborMinutes,
+              unitsSold: isNaN(unitsSold) ? 0 : unitsSold,
+              valid: errors.length === 0,
+              errors,
+              duplicate,
+            }
+          })
+          setParsedData(rows)
+        },
+        error: (err) => {
+          setParseError(`Failed to parse file: ${err.message}`)
+        },
+      })
+    },
+    [menuItems],
+  )
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      setDragOver(false)
+      setParseError('')
+      const file = e.dataTransfer.files[0]
+      if (file && (file.name.endsWith('.csv') || file.name.endsWith('.tsv'))) {
+        processFile(file)
+      } else if (file) {
+        setParseError('Unsupported file type. Please upload a .csv or .tsv file.')
+      }
+    },
+    [processFile],
+  )
+
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (file) processFile(file)
+    },
+    [processFile],
+  )
 
   const handleImport = () => {
     setImporting(true)
-    const validRows = parsedData.filter(r => r.valid)
-    const items: MenuItem[] = validRows.map(row => ({
+    const validRows = parsedData.filter((r) => r.valid)
+    const items: MenuItem[] = validRows.map((row) => ({
       id: generateId(),
       name: row.name,
       category: row.category,
@@ -135,12 +149,13 @@ export function ImportData({ importMenuItems, menuItems }: ImportDataProps) {
     setParseError('')
   }
 
-  const validCount = parsedData.filter(r => r.valid).length
-  const invalidCount = parsedData.filter(r => !r.valid).length
-  const duplicateCount = parsedData.filter(r => r.duplicate && r.valid).length
+  const validCount = parsedData.filter((r) => r.valid).length
+  const invalidCount = parsedData.filter((r) => !r.valid).length
+  const duplicateCount = parsedData.filter((r) => r.duplicate && r.valid).length
 
   const downloadTemplate = () => {
-    const csv = 'name,category,sale_price,ingredient_cost,labor_minutes,units_sold\nAvocado Toast,Breakfast,8.00,2.85,5,145\nEspresso,Beverages,3.50,0.45,2,320'
+    const csv =
+      'name,category,sale_price,ingredient_cost,labor_minutes,units_sold\nAvocado Toast,Breakfast,8.00,2.85,5,145\nEspresso,Beverages,3.50,0.45,2,320'
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -169,8 +184,10 @@ export function ImportData({ importMenuItems, menuItems }: ImportDataProps) {
 
       {/* Supported formats */}
       <div className="flex flex-wrap gap-2">
-        {['Square', 'Toast', 'Clover', 'Lightspeed', 'Generic CSV'].map(name => (
-          <span key={name} className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-lg font-medium">{name}</span>
+        {['Square', 'Toast', 'Clover', 'Lightspeed', 'Generic CSV'].map((name) => (
+          <span key={name} className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-lg font-medium">
+            {name}
+          </span>
         ))}
       </div>
 
@@ -188,18 +205,26 @@ export function ImportData({ importMenuItems, menuItems }: ImportDataProps) {
           role="button"
           tabIndex={0}
           onKeyDown={handleKeyDown}
-          onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+          onDragOver={(e) => {
+            e.preventDefault()
+            setDragOver(true)
+          }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           className={cn(
             'border-2 border-dashed rounded-2xl p-12 text-center transition-all cursor-pointer',
-            dragOver ? 'border-indigo-400 bg-indigo-50' : 'border-[var(--color-border)] bg-white hover:border-indigo-300 hover:bg-indigo-50/30'
+            dragOver
+              ? 'border-indigo-400 bg-indigo-50'
+              : 'border-[var(--color-border)] bg-white hover:border-indigo-300 hover:bg-indigo-50/30',
           )}
           onClick={() => document.getElementById('fileInput')?.click()}
           aria-label="Upload CSV file"
         >
           <input id="fileInput" type="file" accept=".csv,.tsv" className="hidden" onChange={handleFileSelect} />
-          <Upload size={36} className={cn('mx-auto mb-4', dragOver ? 'text-indigo-500' : 'text-[var(--color-text-tertiary)]')} />
+          <Upload
+            size={36}
+            className={cn('mx-auto mb-4', dragOver ? 'text-indigo-500' : 'text-[var(--color-text-tertiary)]')}
+          />
           <p className="text-sm font-medium mb-1">Drop your CSV file here, or click to browse</p>
           <p className="text-xs text-[var(--color-text-tertiary)]">Supports .csv and .tsv files up to 5MB</p>
         </div>
@@ -215,7 +240,11 @@ export function ImportData({ importMenuItems, menuItems }: ImportDataProps) {
                   <p className="text-xs text-[var(--color-text-tertiary)]">{parsedData.length} rows found</p>
                 </div>
               </div>
-              <button onClick={clearImport} className="p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Clear import">
+              <button
+                onClick={clearImport}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                aria-label="Clear import"
+              >
                 <X size={16} className="text-[var(--color-text-tertiary)]" />
               </button>
             </div>
@@ -234,7 +263,9 @@ export function ImportData({ importMenuItems, menuItems }: ImportDataProps) {
               {duplicateCount > 0 && (
                 <div className="flex items-center gap-2 bg-amber-50 px-3 py-2 rounded-xl">
                   <AlertCircle size={14} className="text-amber-500" />
-                  <span className="text-xs font-medium text-amber-700">{duplicateCount} duplicate{duplicateCount !== 1 ? 's' : ''}</span>
+                  <span className="text-xs font-medium text-amber-700">
+                    {duplicateCount} duplicate{duplicateCount !== 1 ? 's' : ''}
+                  </span>
                 </div>
               )}
             </div>
@@ -254,16 +285,21 @@ export function ImportData({ importMenuItems, menuItems }: ImportDataProps) {
                 </thead>
                 <tbody className="divide-y divide-[var(--color-border-light)]">
                   {parsedData.slice(0, 20).map((row, i) => (
-                    <tr key={i} className={cn(
-                      !row.valid ? 'bg-red-50/50' : row.duplicate ? 'bg-amber-50/50' : ''
-                    )}>
+                    <tr key={i} className={cn(!row.valid ? 'bg-red-50/50' : row.duplicate ? 'bg-amber-50/50' : '')}>
                       <td className="px-3 py-2">
-                        {row.valid
-                          ? row.duplicate
-                            ? <span title="Duplicate name"><AlertCircle size={14} className="text-amber-500" /></span>
-                            : <CheckCircle2 size={14} className="text-emerald-500" />
-                          : <span title={row.errors.join(', ')}><AlertCircle size={14} className="text-red-500" /></span>
-                        }
+                        {row.valid ? (
+                          row.duplicate ? (
+                            <span title="Duplicate name">
+                              <AlertCircle size={14} className="text-amber-500" />
+                            </span>
+                          ) : (
+                            <CheckCircle2 size={14} className="text-emerald-500" />
+                          )
+                        ) : (
+                          <span title={row.errors.join(', ')}>
+                            <AlertCircle size={14} className="text-red-500" />
+                          </span>
+                        )}
                       </td>
                       <td className="px-3 py-2 font-medium">{row.name || '—'}</td>
                       <td className="px-3 py-2">{row.category}</td>

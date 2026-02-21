@@ -11,9 +11,17 @@ interface AddEditItemProps {
 }
 
 const defaultItem: Omit<MenuItem, 'id' | 'createdAt'> = {
-  name: '', category: 'Lunch', salePrice: 0, ingredientCost: 0,
-  laborMinutes: 0, laborCostPerMinute: 0.35, packagingCost: 0,
-  wasteFactor: 0.05, unitsSold: 0, period: 'weekly', starred: false,
+  name: '',
+  category: 'Lunch',
+  salePrice: 0,
+  ingredientCost: 0,
+  laborMinutes: 0,
+  laborCostPerMinute: 0.35,
+  packagingCost: 0,
+  wasteFactor: 0.05,
+  unitsSold: 0,
+  period: 'weekly',
+  starred: false,
 }
 
 const categories = ['Breakfast', 'Lunch', 'Dinner', 'Beverages', 'Bakery', 'Desserts', 'Sides', 'Specials']
@@ -30,7 +38,7 @@ export function AddEditItem({ menuItems, addMenuItem, updateMenuItem }: AddEditI
   const { id } = useParams()
   const isEditing = !!id
 
-  const existingItem = useMemo(() => menuItems.find(i => i.id === id), [menuItems, id])
+  const existingItem = useMemo(() => menuItems.find((i) => i.id === id), [menuItems, id])
 
   // Redirect if editing a non-existent item
   useEffect(() => {
@@ -39,7 +47,9 @@ export function AddEditItem({ menuItems, addMenuItem, updateMenuItem }: AddEditI
     }
   }, [isEditing, existingItem, navigate])
 
-  const [form, setForm] = useState(existingItem || { ...defaultItem, id: generateId(), createdAt: new Date().toISOString().slice(0, 10) })
+  const [form, setForm] = useState(
+    existingItem || { ...defaultItem, id: generateId(), createdAt: new Date().toISOString().slice(0, 10) },
+  )
   const [errors, setErrors] = useState<ValidationErrors>({})
   const [submitted, setSubmitted] = useState(false)
 
@@ -84,9 +94,9 @@ export function AddEditItem({ menuItems, addMenuItem, updateMenuItem }: AddEditI
   }
 
   const updateField = <K extends keyof MenuItem>(field: K, value: MenuItem[K]) => {
-    setForm(prev => ({ ...prev, [field]: value }))
+    setForm((prev) => ({ ...prev, [field]: value }))
     if (submitted) {
-      setErrors(prev => ({ ...prev, [field]: undefined }))
+      setErrors((prev) => ({ ...prev, [field]: undefined }))
     }
   }
 
@@ -111,43 +121,64 @@ export function AddEditItem({ menuItems, addMenuItem, updateMenuItem }: AddEditI
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <label htmlFor="item-name" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Item Name</label>
+                <label
+                  htmlFor="item-name"
+                  className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
+                >
+                  Item Name
+                </label>
                 <input
                   id="item-name"
                   type="text"
                   value={form.name}
-                  onChange={e => updateField('name', e.target.value)}
+                  onChange={(e) => updateField('name', e.target.value)}
                   placeholder="e.g., Avocado Toast"
                   className={cn(
                     'w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-all',
-                    errors.name ? 'border-red-400' : 'border-[var(--color-border)]'
+                    errors.name ? 'border-red-400' : 'border-[var(--color-border)]',
                   )}
                 />
                 {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
               </div>
 
               <div>
-                <label htmlFor="item-category" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Category</label>
+                <label
+                  htmlFor="item-category"
+                  className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
+                >
+                  Category
+                </label>
                 <select
                   id="item-category"
                   value={form.category}
-                  onChange={e => updateField('category', e.target.value)}
+                  onChange={(e) => updateField('category', e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-200 cursor-pointer"
                 >
-                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                  {categories.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
                 </select>
               </div>
 
               <div>
-                <label htmlFor="item-price" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Sale Price ($)</label>
+                <label
+                  htmlFor="item-price"
+                  className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
+                >
+                  Sale Price ($)
+                </label>
                 <input
                   id="item-price"
-                  type="number" step="0.01" min="0"
+                  type="number"
+                  step="0.01"
+                  min="0"
                   value={form.salePrice || ''}
-                  onChange={e => updateField('salePrice', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => updateField('salePrice', parseFloat(e.target.value) || 0)}
                   className={cn(
                     'w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400',
-                    errors.salePrice ? 'border-red-400' : 'border-[var(--color-border)]'
+                    errors.salePrice ? 'border-red-400' : 'border-[var(--color-border)]',
                   )}
                 />
                 {errors.salePrice && <p className="text-xs text-red-500 mt-1">{errors.salePrice}</p>}
@@ -159,70 +190,113 @@ export function AddEditItem({ menuItems, addMenuItem, updateMenuItem }: AddEditI
             <h3 className="text-base font-semibold mb-5">Cost Breakdown</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="item-ingredient-cost" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Ingredient Cost ($)</label>
+                <label
+                  htmlFor="item-ingredient-cost"
+                  className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
+                >
+                  Ingredient Cost ($)
+                </label>
                 <input
                   id="item-ingredient-cost"
-                  type="number" step="0.01" min="0"
+                  type="number"
+                  step="0.01"
+                  min="0"
                   value={form.ingredientCost || ''}
-                  onChange={e => updateField('ingredientCost', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => updateField('ingredientCost', parseFloat(e.target.value) || 0)}
                   className={cn(
                     'w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400',
-                    errors.ingredientCost ? 'border-red-400' : 'border-[var(--color-border)]'
+                    errors.ingredientCost ? 'border-red-400' : 'border-[var(--color-border)]',
                   )}
                 />
                 {errors.ingredientCost && <p className="text-xs text-red-500 mt-1">{errors.ingredientCost}</p>}
               </div>
               <div>
-                <label htmlFor="item-packaging-cost" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Packaging Cost ($)</label>
+                <label
+                  htmlFor="item-packaging-cost"
+                  className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
+                >
+                  Packaging Cost ($)
+                </label>
                 <input
                   id="item-packaging-cost"
-                  type="number" step="0.01" min="0"
+                  type="number"
+                  step="0.01"
+                  min="0"
                   value={form.packagingCost || ''}
-                  onChange={e => updateField('packagingCost', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => updateField('packagingCost', parseFloat(e.target.value) || 0)}
                   className={cn(
                     'w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400',
-                    errors.packagingCost ? 'border-red-400' : 'border-[var(--color-border)]'
+                    errors.packagingCost ? 'border-red-400' : 'border-[var(--color-border)]',
                   )}
                 />
                 {errors.packagingCost && <p className="text-xs text-red-500 mt-1">{errors.packagingCost}</p>}
               </div>
               <div>
-                <label htmlFor="item-labor-minutes" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Prep Time (min)</label>
+                <label
+                  htmlFor="item-labor-minutes"
+                  className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
+                >
+                  Prep Time (min)
+                </label>
                 <input
                   id="item-labor-minutes"
-                  type="number" step="1" min="0"
+                  type="number"
+                  step="1"
+                  min="0"
                   value={form.laborMinutes || ''}
-                  onChange={e => updateField('laborMinutes', parseInt(e.target.value) || 0)}
+                  onChange={(e) => updateField('laborMinutes', parseInt(e.target.value) || 0)}
                   className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
                 />
               </div>
               <div>
-                <label htmlFor="item-labor-rate" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Labor $/min</label>
+                <label
+                  htmlFor="item-labor-rate"
+                  className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
+                >
+                  Labor $/min
+                </label>
                 <input
                   id="item-labor-rate"
-                  type="number" step="0.01" min="0"
+                  type="number"
+                  step="0.01"
+                  min="0"
                   value={form.laborCostPerMinute || ''}
-                  onChange={e => updateField('laborCostPerMinute', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => updateField('laborCostPerMinute', parseFloat(e.target.value) || 0)}
                   className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
                 />
               </div>
               <div>
-                <label htmlFor="item-waste" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Waste Factor (%)</label>
+                <label
+                  htmlFor="item-waste"
+                  className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
+                >
+                  Waste Factor (%)
+                </label>
                 <input
                   id="item-waste"
-                  type="number" step="1" min="0" max="100"
+                  type="number"
+                  step="1"
+                  min="0"
+                  max="100"
                   value={Math.round(form.wasteFactor * 100) || ''}
-                  onChange={e => updateField('wasteFactor', (parseInt(e.target.value) || 0) / 100)}
+                  onChange={(e) => updateField('wasteFactor', (parseInt(e.target.value) || 0) / 100)}
                   className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
                 />
               </div>
               <div>
-                <label htmlFor="item-units" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Units Sold / Week</label>
+                <label
+                  htmlFor="item-units"
+                  className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
+                >
+                  Units Sold / Week
+                </label>
                 <input
                   id="item-units"
-                  type="number" step="1" min="0"
+                  type="number"
+                  step="1"
+                  min="0"
                   value={form.unitsSold || ''}
-                  onChange={e => updateField('unitsSold', parseInt(e.target.value) || 0)}
+                  onChange={(e) => updateField('unitsSold', parseInt(e.target.value) || 0)}
                   className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
                 />
               </div>
@@ -263,20 +337,36 @@ export function AddEditItem({ menuItems, addMenuItem, updateMenuItem }: AddEditI
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-[var(--color-text-secondary)]">Margin</span>
-                <span className={cn('text-sm font-semibold', analysis.margin >= 55 ? 'text-emerald-600' : analysis.margin >= 35 ? 'text-amber-600' : 'text-red-500')}>
+                <span
+                  className={cn(
+                    'text-sm font-semibold',
+                    analysis.margin >= 55
+                      ? 'text-emerald-600'
+                      : analysis.margin >= 35
+                        ? 'text-amber-600'
+                        : 'text-red-500',
+                  )}
+                >
                   {formatPercent(analysis.margin)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-[var(--color-text-secondary)]">Weekly Profit</span>
-                <span className={cn('text-sm font-bold', analysis.weeklyProfit >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+                <span
+                  className={cn('text-sm font-bold', analysis.weeklyProfit >= 0 ? 'text-emerald-600' : 'text-red-500')}
+                >
                   {formatCurrency(analysis.weeklyProfit)}
                 </span>
               </div>
             </div>
 
             <div className="mt-5 flex items-center justify-center">
-              <div className={cn('w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold', gradeColor(analysis.grade))}>
+              <div
+                className={cn(
+                  'w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold',
+                  gradeColor(analysis.grade),
+                )}
+              >
                 {analysis.grade}
               </div>
             </div>

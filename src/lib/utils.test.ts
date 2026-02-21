@@ -49,10 +49,12 @@ describe('analyzeMenuItem', () => {
   })
 
   it('handles NaN inputs gracefully', () => {
-    const result = analyzeMenuItem(makeItem({
-      salePrice: NaN,
-      ingredientCost: NaN,
-    }))
+    const result = analyzeMenuItem(
+      makeItem({
+        salePrice: NaN,
+        ingredientCost: NaN,
+      }),
+    )
     expect(result.profitMargin).toBe(0)
     expect(Number.isFinite(result.totalCost)).toBe(true)
     expect(Number.isFinite(result.totalProfit)).toBe(true)

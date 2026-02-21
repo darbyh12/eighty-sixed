@@ -4,7 +4,7 @@ import type { MenuItem } from './types'
 
 describe('demoMenuItems', () => {
   it('has stable IDs across calls', () => {
-    const ids1 = demoMenuItems.map(i => i.id)
+    const ids1 = demoMenuItems.map((i) => i.id)
     // Since these are hardcoded, they should always be the same
     expect(ids1[0]).toBe('demo-item-001')
     expect(ids1[ids1.length - 1]).toBe('demo-item-012')
@@ -15,7 +15,7 @@ describe('demoMenuItems', () => {
   })
 
   it('all items have required fields', () => {
-    demoMenuItems.forEach(item => {
+    demoMenuItems.forEach((item) => {
       expect(item.id).toBeTruthy()
       expect(item.name).toBeTruthy()
       expect(item.salePrice).toBeGreaterThan(0)
@@ -35,7 +35,7 @@ describe('generateCompetitorPrices', () => {
 
   it('returns correct structure', () => {
     const prices = generateCompetitorPrices(demoMenuItems.slice(0, 1))
-    prices.forEach(p => {
+    prices.forEach((p) => {
       expect(p.id).toBeTruthy()
       expect(p.menuItemId).toBe(demoMenuItems[0].id)
       expect(p.competitorName).toBeTruthy()
@@ -58,9 +58,7 @@ describe('generateRecommendations', () => {
 
     const priorityOrder = { high: 0, medium: 1, low: 2 }
     for (let i = 1; i < recs.length; i++) {
-      expect(priorityOrder[recs[i].priority]).toBeGreaterThanOrEqual(
-        priorityOrder[recs[i - 1].priority]
-      )
+      expect(priorityOrder[recs[i].priority]).toBeGreaterThanOrEqual(priorityOrder[recs[i - 1].priority])
     }
   })
 
@@ -70,21 +68,23 @@ describe('generateRecommendations', () => {
   })
 
   it('handles items with zero sale price', () => {
-    const items: MenuItem[] = [{
-      id: 'zero-price',
-      name: 'Free Item',
-      category: 'Test',
-      salePrice: 0,
-      ingredientCost: 1,
-      laborMinutes: 5,
-      laborCostPerMinute: 0.35,
-      packagingCost: 0.15,
-      wasteFactor: 0.05,
-      unitsSold: 100,
-      period: 'weekly',
-      starred: false,
-      createdAt: '2026-01-01',
-    }]
+    const items: MenuItem[] = [
+      {
+        id: 'zero-price',
+        name: 'Free Item',
+        category: 'Test',
+        salePrice: 0,
+        ingredientCost: 1,
+        laborMinutes: 5,
+        laborCostPerMinute: 0.35,
+        packagingCost: 0.15,
+        wasteFactor: 0.05,
+        unitsSold: 100,
+        period: 'weekly',
+        starred: false,
+        createdAt: '2026-01-01',
+      },
+    ]
     // Should not throw
     const recs = generateRecommendations(items)
     expect(Array.isArray(recs)).toBe(true)
@@ -92,7 +92,7 @@ describe('generateRecommendations', () => {
 
   it('all recommendations have required fields', () => {
     const recs = generateRecommendations(demoMenuItems)
-    recs.forEach(rec => {
+    recs.forEach((rec) => {
       expect(rec.id).toBeTruthy()
       expect(rec.menuItemId).toBeTruthy()
       expect(rec.menuItemName).toBeTruthy()

@@ -41,7 +41,7 @@ describe('useStore', () => {
     })
 
     expect(result.current.menuItems.length).toBe(13)
-    expect(result.current.menuItems.find(i => i.id === 'new-item')).toBeTruthy()
+    expect(result.current.menuItems.find((i) => i.id === 'new-item')).toBeTruthy()
   })
 
   it('updates a menu item', () => {
@@ -52,13 +52,13 @@ describe('useStore', () => {
       result.current.updateMenuItem(firstId, { name: 'Updated Name' })
     })
 
-    expect(result.current.menuItems.find(i => i.id === firstId)?.name).toBe('Updated Name')
+    expect(result.current.menuItems.find((i) => i.id === firstId)?.name).toBe('Updated Name')
   })
 
   it('deletes a menu item and cascades to related data', () => {
     const { result } = renderHook(() => useStore())
     const firstId = result.current.menuItems[0].id
-    const initialCompPrices = result.current.competitorPrices.filter(p => p.menuItemId === firstId).length
+    const initialCompPrices = result.current.competitorPrices.filter((p) => p.menuItemId === firstId).length
 
     expect(initialCompPrices).toBeGreaterThan(0) // has competitor prices
 
@@ -66,9 +66,9 @@ describe('useStore', () => {
       result.current.deleteMenuItem(firstId)
     })
 
-    expect(result.current.menuItems.find(i => i.id === firstId)).toBeUndefined()
-    expect(result.current.competitorPrices.filter(p => p.menuItemId === firstId).length).toBe(0)
-    expect(result.current.recommendations.filter(r => r.menuItemId === firstId).length).toBe(0)
+    expect(result.current.menuItems.find((i) => i.id === firstId)).toBeUndefined()
+    expect(result.current.competitorPrices.filter((p) => p.menuItemId === firstId).length).toBe(0)
+    expect(result.current.recommendations.filter((r) => r.menuItemId === firstId).length).toBe(0)
   })
 
   it('toggles star on a menu item', () => {
@@ -80,7 +80,7 @@ describe('useStore', () => {
       result.current.toggleStar(firstId)
     })
 
-    expect(result.current.menuItems.find(i => i.id === firstId)?.starred).toBe(!wasStarred)
+    expect(result.current.menuItems.find((i) => i.id === firstId)?.starred).toBe(!wasStarred)
   })
 
   it('imports menu items', () => {
@@ -103,7 +103,7 @@ describe('useStore', () => {
       result.current.toggleRecommendation(recId)
     })
 
-    expect(result.current.recommendations.find(r => r.id === recId)?.implemented).toBe(!wasImplemented)
+    expect(result.current.recommendations.find((r) => r.id === recId)?.implemented).toBe(!wasImplemented)
   })
 
   it('sets restaurant name', () => {

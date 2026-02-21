@@ -46,5 +46,14 @@ export interface Recommendation {
 }
 
 export type ViewMode = 'grid' | 'table'
-export type SortField = 'name' | 'salePrice' | 'totalCost' | 'profit' | 'profitMargin' | 'unitsSold' | 'totalRevenue' | 'totalProfit' | 'grade'
+export type SortField =
+  | 'name'
+  | 'salePrice'
+  | 'totalCost'
+  | 'profit'
+  | 'profitMargin'
+  | 'unitsSold'
+  | 'totalRevenue'
+  | 'totalProfit'
+  | 'grade'
 export type SortDirection = 'asc' | 'desc'

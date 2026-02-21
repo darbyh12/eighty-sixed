@@ -52,12 +52,18 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
 
 export function gradeColor(grade: string): string {
   switch (grade) {
-    case 'A': return 'text-emerald-600 bg-emerald-50'
-    case 'B': return 'text-blue-600 bg-blue-50'
-    case 'C': return 'text-amber-600 bg-amber-50'
-    case 'D': return 'text-orange-600 bg-orange-50'
-    case 'F': return 'text-red-600 bg-red-50'
-    default: return 'text-gray-600 bg-gray-50'
+    case 'A':
+      return 'text-emerald-600 bg-emerald-50'
+    case 'B':
+      return 'text-blue-600 bg-blue-50'
+    case 'C':
+      return 'text-amber-600 bg-amber-50'
+    case 'D':
+      return 'text-orange-600 bg-orange-50'
+    case 'F':
+      return 'text-red-600 bg-red-50'
+    default:
+      return 'text-gray-600 bg-gray-50'
   }
 }
 

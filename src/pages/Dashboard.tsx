@@ -1,12 +1,29 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  DollarSign, TrendingUp, Percent, UtensilsCrossed,
-  ArrowUpRight, ArrowDownRight, Star, ChevronRight, Lightbulb
+  DollarSign,
+  TrendingUp,
+  Percent,
+  UtensilsCrossed,
+  ArrowUpRight,
+  ArrowDownRight,
+  Star,
+  ChevronRight,
+  Lightbulb,
 } from 'lucide-react'
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, AreaChart, Area
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
 } from 'recharts'
 import type { MenuItemAnalysis, Recommendation } from '../lib/types'
 import { formatCurrency, formatPercent, gradeColor, cn } from '../lib/utils'
@@ -20,12 +37,13 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
   const metrics = useMemo(() => {
     const totalRevenue = analyzedItems.reduce((s, i) => s + i.totalRevenue, 0)
     const totalProfit = analyzedItems.reduce((s, i) => s + i.totalProfit, 0)
-    const avgMargin = analyzedItems.length > 0
-      ? analyzedItems.reduce((s, i) => s + i.profitMargin, 0) / analyzedItems.length
-      : 0
+    const avgMargin =
+      analyzedItems.length > 0 ? analyzedItems.reduce((s, i) => s + i.profitMargin, 0) / analyzedItems.length : 0
     const sorted = [...analyzedItems].sort((a, b) => b.totalProfit - a.totalProfit)
     return {
-      totalRevenue, totalProfit, avgMargin,
+      totalRevenue,
+      totalProfit,
+      avgMargin,
       itemCount: analyzedItems.length,
       topPerformer: sorted[0]?.name || 'N/A',
       worstPerformer: sorted[sorted.length - 1]?.name || 'N/A',
@@ -34,7 +52,7 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
 
   const profitByCategory = useMemo(() => {
     const cats: Record<string, { revenue: number; profit: number; count: number }> = {}
-    analyzedItems.forEach(item => {
+    analyzedItems.forEach((item) => {
       if (!cats[item.category]) cats[item.category] = { revenue: 0, profit: 0, count: 0 }
       cats[item.category].revenue += item.totalRevenue
       cats[item.category].profit += item.totalProfit
@@ -45,31 +63,45 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
 
   const gradeDistribution = useMemo(() => {
     const grades: Record<string, number> = { A: 0, B: 0, C: 0, D: 0, F: 0 }
-    analyzedItems.forEach(item => { grades[item.grade]++ })
+    analyzedItems.forEach((item) => {
+      grades[item.grade]++
+    })
     return Object.entries(grades)
       .filter(([, v]) => v > 0)
       .map(([grade, count]) => ({ grade, count }))
   }, [analyzedItems])
 
   const gradeColors: Record<string, string> = {
-    A: '#22c55e', B: '#3b82f6', C: '#f59e0b', D: '#f97316', F: '#ef4444'
+    A: '#22c55e',
+    B: '#3b82f6',
+    C: '#f59e0b',
+    D: '#f97316',
+    F: '#ef4444',
   }
 
   const topItems = analyzedItems.slice(0, 5)
   const bottomItems = [...analyzedItems].sort((a, b) => a.totalProfit - b.totalProfit).slice(0, 3)
-  const openRecs = recommendations.filter(r => !r.implemented)
+  const openRecs = recommendations.filter((r) => !r.implemented)
 
   if (analyzedItems.length === 0) {
     return (
       <div className="text-center py-20 animate-fade-in">
         <UtensilsCrossed size={48} className="mx-auto text-[var(--color-text-tertiary)] mb-4" />
         <h3 className="text-lg font-semibold mb-2">Welcome to 86'd</h3>
-        <p className="text-sm text-[var(--color-text-secondary)] mb-6">Add menu items to see your profitability dashboard.</p>
+        <p className="text-sm text-[var(--color-text-secondary)] mb-6">
+          Add menu items to see your profitability dashboard.
+        </p>
         <div className="flex justify-center gap-3">
-          <Link to="/menu/add" className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-medium transition-colors">
+          <Link
+            to="/menu/add"
+            className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-medium transition-colors"
+          >
             Add Your First Item
           </Link>
-          <Link to="/import" className="px-5 py-2.5 bg-[var(--color-surface-tertiary)] text-[var(--color-text-secondary)] hover:bg-indigo-50 hover:text-indigo-600 rounded-xl text-sm font-medium transition-colors">
+          <Link
+            to="/import"
+            className="px-5 py-2.5 bg-[var(--color-surface-tertiary)] text-[var(--color-text-secondary)] hover:bg-indigo-50 hover:text-indigo-600 rounded-xl text-sm font-medium transition-colors"
+          >
             Import CSV
           </Link>
         </div>
@@ -127,7 +159,12 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
             <BarChart data={profitByCategory} barGap={8}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
               <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v}`} />
+              <YAxis
+                tick={{ fontSize: 12, fill: '#94a3b8' }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(v) => `$${v}`}
+              />
               <Tooltip
                 contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: 13 }}
                 formatter={(value: number) => [formatCurrency(Number(value))]}
@@ -147,13 +184,14 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
                 data={gradeDistribution}
                 dataKey="count"
                 nameKey="grade"
-                cx="50%" cy="50%"
+                cx="50%"
+                cy="50%"
                 outerRadius={80}
                 innerRadius={50}
                 paddingAngle={3}
                 strokeWidth={0}
               >
-                {gradeDistribution.map(entry => (
+                {gradeDistribution.map((entry) => (
                   <Cell key={entry.grade} fill={gradeColors[entry.grade]} />
                 ))}
               </Pie>
@@ -161,10 +199,12 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
             </PieChart>
           </ResponsiveContainer>
           <div className="flex justify-center gap-4 mt-2">
-            {gradeDistribution.map(entry => (
+            {gradeDistribution.map((entry) => (
               <div key={entry.grade} className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ background: gradeColors[entry.grade] }} />
-                <span className="text-xs text-[var(--color-text-secondary)]">{entry.grade} ({entry.count})</span>
+                <span className="text-xs text-[var(--color-text-secondary)]">
+                  {entry.grade} ({entry.count})
+                </span>
               </div>
             ))}
           </div>
@@ -189,7 +229,14 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
                 contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: 13 }}
                 formatter={(value: number) => [formatCurrency(Number(value))]}
               />
-              <Area type="monotone" dataKey="profit" stroke="#6366f1" fill="url(#profitGrad)" strokeWidth={2} name="Profit" />
+              <Area
+                type="monotone"
+                dataKey="profit"
+                stroke="#6366f1"
+                fill="url(#profitGrad)"
+                strokeWidth={2}
+                name="Profit"
+              />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -198,7 +245,10 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
         <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Top Performers</h3>
-            <Link to="/menu" className="text-xs text-indigo-500 hover:text-indigo-700 font-medium flex items-center gap-0.5">
+            <Link
+              to="/menu"
+              className="text-xs text-indigo-500 hover:text-indigo-700 font-medium flex items-center gap-0.5"
+            >
               View all <ChevronRight size={12} />
             </Link>
           </div>
@@ -227,7 +277,12 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
           <div className="space-y-3">
             {bottomItems.map((item) => (
               <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-red-50/50">
-                <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold', gradeColor(item.grade))}>
+                <div
+                  className={cn(
+                    'w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold',
+                    gradeColor(item.grade),
+                  )}
+                >
                   {item.grade}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -252,22 +307,29 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
       </div>
 
       {/* Starred items row */}
-      {analyzedItems.some(i => i.starred) && (
+      {analyzedItems.some((i) => i.starred) && (
         <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
           <div className="flex items-center gap-2 mb-4">
             <Star size={16} className="text-amber-400 fill-amber-400" />
             <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Starred Items</h3>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {analyzedItems.filter(i => i.starred).map(item => (
-              <div key={item.id} className="p-3 rounded-xl border border-[var(--color-border-light)] hover:border-indigo-200 transition-colors">
-                <p className="text-sm font-medium truncate">{item.name}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full', gradeColor(item.grade))}>{item.grade}</span>
-                  <span className="text-sm font-semibold text-emerald-600">{formatCurrency(item.profit)}</span>
+            {analyzedItems
+              .filter((i) => i.starred)
+              .map((item) => (
+                <div
+                  key={item.id}
+                  className="p-3 rounded-xl border border-[var(--color-border-light)] hover:border-indigo-200 transition-colors"
+                >
+                  <p className="text-sm font-medium truncate">{item.name}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full', gradeColor(item.grade))}>
+                      {item.grade}
+                    </span>
+                    <span className="text-sm font-semibold text-emerald-600">{formatCurrency(item.profit)}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       )}
@@ -275,14 +337,30 @@ export function Dashboard({ analyzedItems, recommendations }: DashboardProps) {
   )
 }
 
-function KPICard({ label, value, change, icon, color }: {
-  label: string; value: string; change?: number; icon: React.ReactNode; color: string
+function KPICard({
+  label,
+  value,
+  change,
+  icon,
+  color,
+}: {
+  label: string
+  value: string
+  change?: number
+  icon: React.ReactNode
+  color: string
 }) {
   const bgColors: Record<string, string> = {
-    indigo: 'bg-indigo-50', emerald: 'bg-emerald-50', amber: 'bg-amber-50', violet: 'bg-violet-50'
+    indigo: 'bg-indigo-50',
+    emerald: 'bg-emerald-50',
+    amber: 'bg-amber-50',
+    violet: 'bg-violet-50',
   }
   const iconColors: Record<string, string> = {
-    indigo: 'text-indigo-500', emerald: 'text-emerald-500', amber: 'text-amber-500', violet: 'text-violet-500'
+    indigo: 'text-indigo-500',
+    emerald: 'text-emerald-500',
+    amber: 'text-amber-500',
+    violet: 'text-violet-500',
   }
 
   return (
@@ -292,10 +370,12 @@ function KPICard({ label, value, change, icon, color }: {
           {icon}
         </div>
         {change !== undefined && (
-          <span className={cn(
-            'flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full',
-            change >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-500 bg-red-50'
-          )}>
+          <span
+            className={cn(
+              'flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full',
+              change >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-500 bg-red-50',
+            )}
+          >
             {change >= 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
             {Math.abs(change)}%
           </span>
@@ -306,4 +386,3 @@ function KPICard({ label, value, change, icon, color }: {
     </div>
   )
 }
-
